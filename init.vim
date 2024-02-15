@@ -17,7 +17,7 @@ filetype indent on
 filetype off
 setlocal indentkeys-=:
 set shell=/bin/bash
-
+set belloff=all
 "keybindings for { completion, "jk" for escape, ctrl-a to select all
 inoremap {<CR>  {<CR>}<Esc>O
 inoremap {}     {}
@@ -25,9 +25,28 @@ imap jk         <Esc>
 map <C-a> <esc>ggVG<CR>
 set belloff=all
 
+tnoremap <C-n> <C-\><C-n>
+
+" Automatically save the file and run Rust code when pressing Ctrl+Alt+B
+nnoremap <silent> <C-M-b> :w<CR>:silent !cargo run<CR>:redraw!<CR>
+
+" Run the command when the file is saved
+autocmd BufWritePost *.rs :silent !cargo run
+
+" Set transparency for all highlight groups
+autocmd VimEnter * hi Normal guibg=NONE ctermbg=NONE
+autocmd VimEnter * hi NonText guibg=NONE ctermbg=NONE
+autocmd VimEnter * hi LineNr guibg=NONE ctermbg=NONE
+autocmd VimEnter * hi SignColumn guibg=NONE ctermbg=NONE
+autocmd VimEnter * hi VertSplit guibg=NONE ctermbg=NONE
+autocmd VimEnter * hi FoldColumn guibg=NONE ctermbg=NONE
+
 
 call plug#begin()
-
+Plug 'ellisonleao/gruvbox.nvim'
+Plug 'rose-pine/neovim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'rust-lang/rust.vim'
 Plug 'http://github.com/tpope/vim-surround' " Surrounding ysw)
 Plug 'https://github.com/preservim/nerdtree' " NerdTree
 Plug 'https://github.com/tpope/vim-commentary' " For Commenting gcc & gc
@@ -40,9 +59,10 @@ Plug 'https://github.com/ryanoasis/vim-devicons' " Developer Icons
 Plug 'https://github.com/tc50cal/vim-terminal' " Vim Terminal
 Plug 'https://github.com/preservim/tagbar' " Tagbar for code navigation
 Plug 'https://github.com/terryma/vim-multiple-cursors' " CTRL + N for multiple cursors
-
-
 call plug#end()
+
+" Autosave after 1 second of inactivity
+autocmd CursorHold * if mode() != 'n' | silent! wall | endif
 
 
 nnoremap <C-f> :NERDTreeFocus<CR>
@@ -54,8 +74,23 @@ nmap <F8> :TagbarToggle<CR>
 
 :set completeopt-=preview " For No Previews
 
-:colorscheme jellybeans
 
+
+:colorscheme jellybeans
+let g:coc_global_extensions = ['coc-clangd']
+let g:gruvbox_transparent_bg = 1
+" Enable Rust syntax highlighting
+syntax enable
+
+" Enable Rust filetype detection
+filetype plugin indent on
+
+" Set Rust code formatting options
+autocmd FileType rust setlocal expandtab shiftwidth=4 softtabstop=4
+
+" Use cargo check for error highlighting
+
+let g:coc_global_extensions = ['coc-rust-analyzer']
 
 
 let g:NERDTreeDirArrowExpandable="+"
@@ -184,3 +219,15 @@ function MyDiff()
     let &shellxquote=l:shxq_sav
   endif
 endfunction
+
+
+
+
+
+
+
+
+
+
+
+
